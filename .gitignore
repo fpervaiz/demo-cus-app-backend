@@ -116,3 +116,6 @@ dmypy.json
 
 # ignore the database
 people.db
+
+# VS Code
+.vscode/
