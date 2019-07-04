@@ -5,53 +5,82 @@ people data
 
 from flask import make_response, abort
 from config import db
-from models import Person, PersonSchema, Note
+from models import Event, EventSchema
 
 
 def read_all():
     """
-    This function responds to a request for /api/people
+    This function responds to a request for /api/events
     with the complete lists of people
 
     :return:        json string of list of people
     """
     # Create the list of people from our data
-    people = Person.query.order_by(Person.lname).all()
+    events = Event.query.order_by(Event.event_start_timestamp).all()
 
     # Serialize the data for the response
-    person_schema = PersonSchema(many=True)
-    data = person_schema.dump(people).data
+    event_schema = EventSchema(many=True)
+    data = event_schema.dump(events).data
     return data
 
 
-def read_one(person_id):
+def read_one(event_id):
     """
-    This function responds to a request for /api/people/{person_id}
+    This function responds to a request for /api/events/{person_id}
     with one matching person from people
 
-    :param person_id:   Id of person to find
-    :return:            person matching id
+    :param event_id:   Id of event to find
+    :return:            event matching id
     """
     # Build the initial query
-    person = (
-        Person.query.filter(Person.person_id == person_id)
-        .outerjoin(Note)
+    event = (
+        Event.query.filter(Event.event_id == event_id)
         .one_or_none()
     )
 
     # Did we find a person?
-    if person is not None:
+    if event is not None:
 
         # Serialize the data for the response
-        person_schema = PersonSchema()
-        data = person_schema.dump(person).data
+        event_schema = EventSchema()
+        data = event_schema.dump(event).data
         return data
 
     # Otherwise, nope, didn't find that person
     else:
-        abort(404, f"Person not found for Id: {person_id}")
+        abort(404, f"Event not found for Id: {event_id}")
 
+def upcoming():
+    """
+    This function returns a list of upcoming events from the database
 
+    :return:        200 json string
+    """
+
+    upcoming_events = (
+        Event.query.filter(Event.event_status == 'upcoming').order_by(Event.event_start_timestamp).all()
+    )
+
+    event_schema = EventSchema(many=True)
+    data = event_schema.dump(upcoming_events).data
+    return data
+
+def next():
+    """
+    This function returns the next event from the database
+
+    :return:        200 json string
+    """
+
+    next_event = (
+        Event.query.filter(Event.event_status == 'upcoming').order_by(Event.event_start_timestamp).first()
+    )
+
+    event_schema = EventSchema()
+    data = event_schema.dump(next_event).data
+    return data
+
+'''
 def create(person):
     """
     This function creates a new person in the people structure
@@ -146,3 +175,4 @@ def delete(person_id):
     # Otherwise, nope, didn't find that person
     else:
         abort(404, f"Person not found for Id: {person_id}")
+'''

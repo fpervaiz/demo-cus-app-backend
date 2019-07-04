@@ -29,16 +29,16 @@ def home():
 
 
 # Create a URL route in our application for "/people"
-@connex_app.route("/people")
-@connex_app.route("/people/<int:person_id>")
-def people(person_id=""):
+@connex_app.route("/events")
+@connex_app.route("/events/<int:event_id>")
+def events(event_id=""):
     """
     This function just responds to the browser URL
-    localhost:5000/people
+    localhost:5000/events
 
     :return:        the rendered template "people.html"
     """
-    return render_template("people.html", person_id=person_id)
+    return render_template("people.html", person_id=event_id)
 
 
 # Create a URL route to the notes page
