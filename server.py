@@ -11,6 +11,7 @@ import config
 
 # Get the application instance
 connex_app = config.connex_app
+connex_app.app.url_map.strict_slashes = False
 
 # Read the swagger.yml file to configure the endpoints
 connex_app.add_api("swagger.yml")

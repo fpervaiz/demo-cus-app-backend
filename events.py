@@ -6,6 +6,7 @@ people data
 from flask import make_response, abort
 from config import db
 from models import Event, EventSchema
+from sqlalchemy import and_
 
 
 def read_all():
@@ -50,19 +51,32 @@ def read_one(event_id):
     else:
         abort(404, f"Event not found for Id: {event_id}")
 
-def upcoming():
+def by_status_type(event_status_param, event_type_param):
     """
-    This function returns a list of upcoming events from the database
+    This function returns a list of upcoming or past events of the given type from the database
 
     :return:        200 json string
     """
 
-    upcoming_events = (
-        Event.query.filter(Event.event_status == 'upcoming').order_by(Event.event_start_timestamp).all()
+    valid_status = ['upcoming', 'finished']
+    valid_type = ['all', 'debate', 'speaker', 'panel', 'other']
+
+    if event_status_param not in valid_status or event_type_param not in valid_type:
+        abort(400, 'Invalid request')
+
+    if event_type_param == 'all':
+        result_events = (
+        Event.query.filter(Event.event_status == event_status_param).order_by(Event.event_start_timestamp).all()
     )
+    else:
+        result_events = (
+            Event.query.filter(and_(Event.event_status == event_status_param, Event.event_type == event_type_param)).order_by(Event.event_start_timestamp).all()
+        )
+
+    #is_many = len(result_events) > 1  
 
     event_schema = EventSchema(many=True)
-    data = event_schema.dump(upcoming_events).data
+    data = event_schema.dump(result_events).data
     return data
 
 def next():

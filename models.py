@@ -14,6 +14,7 @@ class Event(db.Model):
     event_interested = db.Column(db.Integer)
     event_start_timestamp = db.Column(db.Integer)
     event_status = db.Column(db.String)
+    event_type = db.Column(db.String)
 
 
 class EventSchema(ma.ModelSchema):
