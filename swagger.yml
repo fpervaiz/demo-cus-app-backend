@@ -101,16 +101,27 @@ paths:
                 type: string
                 description: Whether event is past, upcoming or live
     
-  /events/upcoming:
+  /events/{event_status_param}/{event_type_param}:
     get:
-      operationId: events.upcoming
+      operationId: events.by_status_type
       tags:
         - Events
       summary: Read the set of upcoming events, sorted by closest first
       description: Read the set of upcoming events, sorted by closest first
+      parameters:
+        - name: event_status_param
+          in: path
+          description: Status of events to get (upcoming, past or live)
+          type: string
+          required: True
+        - name: event_type_param
+          in: path
+          description: Type of events to get (all, debate, speaker, panel, other)
+          type: string
+          required: True
       responses:
         200:
-          description: Successfully read events set operation
+          description: Successfully read events
           schema:
             type: array
             items:

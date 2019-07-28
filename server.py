@@ -4,6 +4,7 @@ Main module of the server file
 
 # 3rd party moudles
 from flask import render_template
+from flask_cors import CORS
 
 # Local modules
 import config
@@ -11,6 +12,8 @@ import config
 
 # Get the application instance
 connex_app = config.connex_app
+connex_app.app.url_map.strict_slashes = False
+CORS(connex_app.app)
 
 # Read the swagger.yml file to configure the endpoints
 connex_app.add_api("swagger.yml")
