@@ -1,4 +1,6 @@
 """
+FILE LEFT FOR USAGE REFERENCE
+
 This is the people module and supports all the REST actions for the
 people data
 """
