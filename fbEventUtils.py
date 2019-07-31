@@ -13,6 +13,14 @@ app_id = '636985933445299'
 app_secret = '48fff212b34f1368740b1a8684030cc8'
 page_token = 'EAAJDVdhKOLMBAL7QlQwAOlQGo3KwBe5ZCd9JrD5966wY7KxXXjJfAZBGVbWmht4RCNYILtXKSrr48ZCcKWSmrM4pwL2lqkDVO1ybaCtOgNKoPtXARPKtHSE2gDKwAi6j0X3I7VlZAbqtgjTvFHwFKDnYFVpfROvZCWLk2qhBxkAZDZD'
 
+# Need to come up with a specification for consistently
+# identifying event type from Facebook event title
+debate_identifiers = ['thb', 'thw', 'debate']
+panel_identifiers = ['panel']
+speaker_identifiers = ['|']
+
+open_identifiers = ['open to all', 'all university members']
+
 facebook = Facebook(
     app_id=app_id,
     app_secret=app_secret
@@ -21,7 +29,7 @@ facebook = Facebook(
 facebook.set_default_access_token(access_token=page_token)
 
 class UnionEvent:
-    def __init__(self, name, id, description, date, start, end, going, interested, status, start_timestamp):
+    def __init__(self, name, id, description, date, start, end, going, interested, status, start_timestamp, event_type, open_to_all, speakers):
         self.name = name
         self.id = id
         self.description = description
@@ -32,6 +40,9 @@ class UnionEvent:
         self.interested = interested
         self.status = status
         self.start_timestamp = start_timestamp
+        self.type = event_type
+        self.open_to_all = open_to_all
+        self.speakers = speakers
 
     def __lt__(self, other):
         return other.start_timestamp < self.start_timestamp
@@ -56,6 +67,50 @@ def fbGet(url):
             return response.json_body['data']
         except KeyError:
             return response.json_body
+
+def parse_speakers(text):
+    # SPECIFICATION NEEDED
+    # Remove blank lines and strip end of line colons    
+    text = text.split('\n')
+    lines = [line for line in text if not line == '']
+    for i in range(len(lines)):
+        if lines[i].endswith(':'):
+            lines[i] = lines[i].replace(':', '')
+            
+    # Find start and end of speaker descriptions
+    prop_i = lines.index('Proposition')
+    opp_i = lines.index('Opposition')
+    # end_i = lines.index('***') # to be implemented
+
+    # Create list of speaker dictionaries
+    prop_lines = lines[prop_i+1:opp_i]
+    prop_names = prop_lines[::2]
+    prop_desc = prop_lines[1::2]
+
+    # opp_lines = lines[opp_i+1:end_i]
+    # opp_names = opp_lines[::2]
+    # opp_desc = opp_lines[1::2]
+
+    event_speakers = list()
+
+    for i in range(len(prop_names)):
+        speaker = dict()
+        speaker['name'] = prop_names[i]
+        speaker['desc'] = prop_desc[i]
+        speaker['type'] = 'prop'
+        event_speakers.append(speaker)
+        
+    '''
+    for i in range(len(opp_names)):
+        speaker = dict()
+        speaker['name'] = opp_names[i]
+        speaker['desc'] = opp_desc[i]
+        speaker['type'] = 'opp'
+        event_speakers.append(speaker)
+    '''
+
+    return event_speakers
+            
 
 def processEvents(event_list_get):
     events = list()
@@ -93,7 +148,32 @@ def processEvents(event_list_get):
         event_going = str(attendance_data['attending_count'])
         event_interested = str(attendance_data['maybe_count'])
 
-        event = UnionEvent(event_name, event_id, event_description, event_date, event_start_time, event_end_time, event_going, event_interested, event_status, event_start_timestamp)
+        if any(identifier in event_name.lower() for identifier in debate_identifiers):
+            event_type = 'debate'
+        elif any(identifier in event_name.lower() for identifier in panel_identifiers):
+            event_type = 'panel'
+        elif any(identifier in event_name.lower() for identifier in speaker_identifiers):
+            event_type = 'speaker'
+        else:
+            event_type = 'other'
+
+        if any(identifier in event_description.lower() for identifier in open_identifiers):
+            event_open_to_all = 'true'
+        else:
+            event_open_to_all = 'false'
+
+        if event_type == 'debate':
+            # Parse description to extract speakers
+            try:
+                event_speakers = parse_speakers(event_description)
+            except ValueError:
+                print('Error processing {}'.format(event_name))
+                print(event_description)
+                event_speakers = None
+        else:
+            event_speakers = None
+
+        event = UnionEvent(event_name, event_id, event_description, event_date, event_start_time, event_end_time, event_going, event_interested, event_status, event_start_timestamp, event_type, event_open_to_all, event_speakers)
         
         events.append(event)
 
