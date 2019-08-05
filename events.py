@@ -6,7 +6,7 @@ people data
 from flask import make_response, abort
 from config import db
 from models import Event, EventSchema, Speaker, SpeakerSchema
-from sqlalchemy import and_
+from sqlalchemy import and_, or_
 
 
 def read_all():
@@ -87,7 +87,7 @@ def next():
     """
 
     next_event = (
-        Event.query.filter(Event.event_status == 'upcoming').order_by(Event.event_start_timestamp).first()
+        Event.query.filter(or_(Event.event_status == 'upcoming', Event.event_status == 'live')).order_by(Event.event_start_timestamp).first()
     )
 
     event_schema = EventSchema()
