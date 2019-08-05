@@ -32,6 +32,9 @@ paths:
                 event_name:
                   type: string
                   description: Name of the event
+                event_subtitle:
+                  type: string
+                  description: Subtitle of the event
                 event_description:
                   type: string
                   description: Description of the event
@@ -79,6 +82,9 @@ paths:
               event_name:
                 type: string
                 description: Name of the event
+              event_subtitle:
+                  type: string
+                  description: Subtitle of the event
               event_description:
                 type: string
                 description: Description of the event
@@ -132,6 +138,9 @@ paths:
                 event_name:
                   type: string
                   description: Name of the event
+                event_subtitle:
+                  type: string
+                  description: Subtitle of the event
                 event_description:
                   type: string
                   description: Description of the event
@@ -174,6 +183,9 @@ paths:
                 event_name:
                   type: string
                   description: Name of the event
+                event_subtitle:
+                  type: string
+                  description: Subtitle of the event
                 event_description:
                   type: string
                   description: Description of the event
@@ -195,4 +207,46 @@ paths:
                 event_status:
                   type: string
                   description: Whether event is past, upcoming or live
-            
+
+  /events/{event_id}/{speaker_type}:
+    get:
+      operationId: events.get_speakers
+      tags:
+        - Events
+      summary: Get speakers for event
+      description: Get speakers for event
+      parameters:
+        - name: event_id
+          in: path
+          description: Id of the event to get
+          type: integer
+          required: True
+        - name: speaker_type
+          in: path
+          description: Type of speaker required
+          type: string
+          required: True
+      responses:
+        200:
+          description: Successfully read speakers from database
+          schema:
+            type: object
+            properties:
+              speaker_id:
+                type: integer
+                description: Id of the speake
+              event_id:
+                type: integer
+                description: Id of the event              
+              speaker_name:
+                type: string
+                description: Name of the speaker
+              speaker_type:
+                type: string
+                description: Type of the speaker
+              speaker_description:
+                type: string
+                description: Description of the speaker
+              speaker_thumb_url:
+                type: string
+                description: Speaker thumbnail url

@@ -5,7 +5,7 @@ people data
 
 from flask import make_response, abort
 from config import db
-from models import Event, EventSchema
+from models import Event, EventSchema, Speaker, SpeakerSchema
 from sqlalchemy import and_
 
 
@@ -27,8 +27,8 @@ def read_all():
 
 def read_one(event_id):
     """
-    This function responds to a request for /api/events/{person_id}
-    with one matching person from people
+    This function responds to a request for /api/events/{event_id}
+    with one matching event from evvents
 
     :param event_id:   Id of event to find
     :return:            event matching id
@@ -39,7 +39,7 @@ def read_one(event_id):
         .one_or_none()
     )
 
-    # Did we find a person?
+    # Did we find an event?
     if event is not None:
 
         # Serialize the data for the response
@@ -93,6 +93,29 @@ def next():
     event_schema = EventSchema()
     data = event_schema.dump(next_event).data
     return data
+
+def get_speakers(event_id, speaker_type):
+    """
+    This function returns a list of proposition or opposition speakers for debates from the database
+
+    :return:        200 json string
+    """
+
+    valid_type = ['prop', 'opp']
+
+    if speaker_type not in valid_type:
+        abort(400, 'Invalid request - unknown speaker type')
+
+    result_speakers = (
+            Speaker.query.filter(and_(Speaker.event_id == event_id, Speaker.speaker_type == speaker_type)).order_by(Speaker.speaker_id).all()
+        )
+
+    if result_speakers is None:
+        abort(400, 'Invalid request - event is not a debate - no speakers found')
+    else:
+        speaker_schema = SpeakerSchema(many=True)
+        data = speaker_schema.dump(result_speakers).data
+        return data
 
 '''
 def create(person):

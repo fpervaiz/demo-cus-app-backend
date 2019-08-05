@@ -16,7 +16,7 @@ db.create_all()
 
 # iterate over the PEOPLE structure and populate the database
 for event in eventData:
-    eventRow = Event(event_id=event.id, event_name=event.name, event_description=event.description, event_date=event.date, event_start=event.start, event_end=event.end, event_going=event.going, event_interested=event.interested, event_start_timestamp=event.start_timestamp, event_status=event.status, event_type=event.type, event_open_to_all = event.open_to_all)
+    eventRow = Event(event_id=event.id, event_name=event.name, event_subtitle=event.subtitle, event_description=event.description, event_date=event.date, event_start=event.start, event_end=event.end, event_going=event.going, event_interested=event.interested, event_start_timestamp=event.start_timestamp, event_status=event.status, event_type=event.type, event_open_to_all = event.open_to_all)
 
     if event.speakers:
         for speaker in event.speakers:

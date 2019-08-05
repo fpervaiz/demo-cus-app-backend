@@ -29,8 +29,9 @@ facebook = Facebook(
 facebook.set_default_access_token(access_token=page_token)
 
 class UnionEvent:
-    def __init__(self, name, id, description, date, start, end, going, interested, status, start_timestamp, event_type, open_to_all, speakers):
+    def __init__(self, name, subtitle, id, description, date, start, end, going, interested, status, start_timestamp, event_type, open_to_all, speakers):
         self.name = name
+        self.subtitle = subtitle
         self.id = id
         self.description = description
         self.date = date
@@ -69,10 +70,10 @@ def fbGet(url):
             return response.json_body
 
 def parse_speakers(text):
-    # SPECIFICATION NEEDED
-    # Remove blank lines and strip end of line colons    
+    # TODO SPECIFICATION NEEDED
+    # Remove blank lines and strip end of line colons/spaces   
     text = text.split('\n')
-    lines = [line for line in text if not line == '']
+    lines = [line.strip() for line in text if not line == '']
     for i in range(len(lines)):
         if lines[i].endswith(':'):
             lines[i] = lines[i].replace(':', '')
@@ -95,19 +96,25 @@ def parse_speakers(text):
 
     for i in range(len(prop_names)):
         speaker = dict()
-        speaker['name'] = prop_names[i]
-        speaker['desc'] = prop_desc[i]
-        speaker['type'] = 'prop'
+        try:
+            speaker['name'] = prop_names[i]
+            speaker['desc'] = prop_desc[i]
+            speaker['type'] = 'prop'
+        except (IndexError, ValueError):
+            speaker['name'] = 'Error speaker {}'.format(i+1)
+            speaker['desc'] = 'Error speaker {} description'.format(i+1)
+            speaker['type'] = 'prop'
         event_speakers.append(speaker)
         
-    '''
-    for i in range(len(opp_names)):
+    # TODO
+    # for i in range(len(opp_names)):
+    for i in range(3):
         speaker = dict()
-        speaker['name'] = opp_names[i]
-        speaker['desc'] = opp_desc[i]
+        speaker['name'] = 'Opp Speaker {}'.format(i+1) # opp_names[i]
+        speaker['desc'] = 'Opp Speaker {}'.format(i+1) # opp_desc[i]
         speaker['type'] = 'opp'
         event_speakers.append(speaker)
-    '''
+    
 
     return event_speakers
             
@@ -173,7 +180,14 @@ def processEvents(event_list_get):
         else:
             event_speakers = None
 
-        event = UnionEvent(event_name, event_id, event_description, event_date, event_start_time, event_end_time, event_going, event_interested, event_status, event_start_timestamp, event_type, event_open_to_all, event_speakers)
+        if '|' in event_name:
+            a, b = event_name.split('|')
+            event_name = a.strip()
+            event_subtitle = b.strip()
+        else:
+            event_subtitle = None
+        
+        event = UnionEvent(event_name, event_subtitle, event_id, event_description, event_date, event_start_time, event_end_time, event_going, event_interested, event_status, event_start_timestamp, event_type, event_open_to_all, event_speakers)
         
         events.append(event)
 
