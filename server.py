@@ -9,7 +9,6 @@ from flask_cors import CORS
 # Local modules
 import config
 
-
 # Get the application instance
 connex_app = config.connex_app
 connex_app.app.url_map.strict_slashes = False

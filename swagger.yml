@@ -17,8 +17,8 @@ paths:
       operationId: events.read_all
       tags:
         - Events
-      summary: Read the entire set of events, sorted by furthest first
-      description: Read the entire set of events, sorted by furthest first
+      summary: Read the entire set of events, sorted by oldest first
+      description: Read the entire set of events, sorted by oldest first
       responses:
         200:
           description: Successfully read events set operation
@@ -55,7 +55,7 @@ paths:
                   description: Number interested in event
                 event_status:
                   type: string
-                  description: Whether event is past, upcoming or live
+                  description: Whether event is finished, upcoming or live
 
   /events/{event_id}:
     get:
@@ -72,7 +72,7 @@ paths:
           required: True
       responses:
         200:
-          description: Successfully read event from event data operation
+          description: Successfully read event from database
           schema:
             type: object
             properties:
@@ -105,19 +105,19 @@ paths:
                 description: Number interested in event
               event_status:
                 type: string
-                description: Whether event is past, upcoming or live
+                description: Whether event is finished, upcoming or live
     
   /events/{event_status_param}/{event_type_param}:
     get:
       operationId: events.by_status_type
       tags:
         - Events
-      summary: Read the set of upcoming events, sorted by closest first
-      description: Read the set of upcoming events, sorted by closest first
+      summary: Read the set of events by status, sorted by closest first
+      description: Read the set of events by status, sorted by closest first
       parameters:
         - name: event_status_param
           in: path
-          description: Status of events to get (upcoming, past or live)
+          description: Status of events to get (upcoming, finished, live)
           type: string
           required: True
         - name: event_type_param
@@ -161,7 +161,7 @@ paths:
                   description: Number interested in event
                 event_status:
                   type: string
-                  description: Whether event is past, upcoming or live
+                  description: Whether event is finished, upcoming or live
 
   /events/next:
     get:
@@ -169,7 +169,7 @@ paths:
       tags:
         - Events
       summary: Read the next event
-      description: Read the next event
+      description: Read the next event/currently live event
       responses:
         200:
           description: Successfully read next event
@@ -206,7 +206,7 @@ paths:
                   description: Number interested in event
                 event_status:
                   type: string
-                  description: Whether event is past, upcoming or live
+                  description: Whether event is finished, upcoming or live
 
   /events/{event_id}/{speaker_type}:
     get:
@@ -218,12 +218,12 @@ paths:
       parameters:
         - name: event_id
           in: path
-          description: Id of the event to get
+          description: Id of the event for which speakers are required
           type: integer
           required: True
         - name: speaker_type
           in: path
-          description: Type of speaker required
+          description: Type of speaker required (prop, opp)
           type: string
           required: True
       responses:
@@ -234,7 +234,7 @@ paths:
             properties:
               speaker_id:
                 type: integer
-                description: Id of the speake
+                description: Id of the speaker
               event_id:
                 type: integer
                 description: Id of the event              
@@ -249,4 +249,4 @@ paths:
                 description: Description of the speaker
               speaker_thumb_url:
                 type: string
-                description: Speaker thumbnail url
+                description: Speaker thumbnail url/data
