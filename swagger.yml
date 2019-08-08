@@ -1,8 +1,8 @@
 swagger: "2.0"
 info:
-  description: This is the swagger file that goes with our server code
+  description: API reference
   version: "1.0.0"
-  title: Swagger Rest Article
+  title: Swagger UI API reference
 consumes:
   - application/json
 produces:
