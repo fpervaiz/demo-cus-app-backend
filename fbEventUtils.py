@@ -161,9 +161,9 @@ def get_term(timestamp, get_is_term=False):
         is_term = terms[i]['term']
         i += 1
     if get_is_term:
-        return event_term
-    else:
         return [event_term, is_term]
+    else:
+        return event_term
 
 def process_events(event_list_get):
     events = list()

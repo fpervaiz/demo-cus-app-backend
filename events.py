@@ -8,15 +8,27 @@ from config import db
 from models import Event, EventSchema, Speaker, SpeakerSchema
 from sqlalchemy import and_, or_
 
+from fbEventUtils import get_term
+from datetime import datetime
+
+def this_term():
+    """
+    This function returns the current term (or vacation)
+    
+    :return:        json string of list of events
+    """
+    now = datetime.timestamp(datetime.now())
+    out = get_term(now, get_is_term=True)
+    return {'term': out[0], 'is_term': out[1]}
 
 def read_all():
     """
     This function responds to a request for /api/events
-    with the complete lists of people
+    with the complete lists of events
 
-    :return:        json string of list of people
+    :return:        json string of list of events
     """
-    # Create the list of people from our data
+    # Create the list of events from our data
     events = Event.query.order_by(Event.event_start_timestamp).all()
 
     # Serialize the data for the response

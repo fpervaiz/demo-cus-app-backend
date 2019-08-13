@@ -12,6 +12,26 @@ basePath: /api
 
 # Paths supported by the server application
 paths:
+  /term:
+    get:
+      operationId: events.this_term
+      tags:
+        - Events
+      summary: Return the current term or holiday
+      description: Return the current term or holiday
+      responses:
+        200:
+          description: Successfully retrieved current term
+          schema:
+            type: array
+            items:
+              properties:
+                term:
+                  type: string
+                  description: Name of current term/holiday
+                is_term:
+                  type: string
+                  description: Is the returned period a term?
   /events:
     get:
       operationId: events.read_all
