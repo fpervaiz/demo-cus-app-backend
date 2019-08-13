@@ -1,3 +1,5 @@
+from datetime import datetime
+
 def ps():
     with open('desc.txt', 'r') as f:
         text = f.read()
@@ -42,3 +44,43 @@ def ps():
     '''
 
     return event_speakers
+
+terms = [
+    {
+        'name': 'Easter 2019',
+        'start': datetime.strptime('2019-04-20', '%Y-%m-%d'),
+    },
+    {
+        'name': 'Long Vacation 2019',
+        'start': datetime.strptime('2019-07-01', '%Y-%m-%d'),
+        
+    },
+    {
+        'name': 'Michaelmas 2019',
+        'start': datetime.strptime('2019-10-01', '%Y-%m-%d'),
+    },
+    {
+        'name': 'Christmas Break 2019/20',
+        'start': datetime.strptime('2019-12-10', '%Y-%m-%d'),
+    },
+    {
+        'name': 'Lent 2020',
+        'start': datetime.strptime('2020-01-10', '%Y-%m-%d'),
+    },
+    {
+        'name': 'Easter Break 2020',
+        'start': datetime.strptime('2020-03-25', '%Y-%m-%d'),
+    }
+]
+
+def gt(st):
+    event_start_timestamp = datetime.timestamp(datetime.strptime(st, '%Y-%m-%d'))
+    i = 0
+    while i < len(terms) and event_start_timestamp > datetime.timestamp(terms[i]['start']):
+        event_term = terms[i]['name']
+        i += 1
+    return '\nEvent term: {}'.format(event_term)
+
+while True:
+    inp = input('\n> ')
+    print(gt(inp))

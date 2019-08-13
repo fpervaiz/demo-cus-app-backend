@@ -21,6 +21,39 @@ speaker_identifiers = ['|']
 
 open_identifiers = ['open to all', 'all university members']
 
+terms = [
+    {
+        'name': 'Easter 2019',
+        'start': datetime.strptime('2019-04-20', '%Y-%m-%d'),
+        'term': True
+    },
+    {
+        'name': 'Long Vacation 2019',
+        'start': datetime.strptime('2019-07-01', '%Y-%m-%d'),
+        'term': False       
+    },
+    {
+        'name': 'Michaelmas 2019',
+        'start': datetime.strptime('2019-10-01', '%Y-%m-%d'),
+        'term': True
+    },
+    {
+        'name': 'Christmas Break 2019/20',
+        'start': datetime.strptime('2019-12-10', '%Y-%m-%d'),
+        'term': False
+    },
+    {
+        'name': 'Lent 2020',
+        'start': datetime.strptime('2020-01-10', '%Y-%m-%d'),
+        'term': True
+    },
+    {
+        'name': 'Easter Break 2020',
+        'start': datetime.strptime('2020-03-25', '%Y-%m-%d'),
+        'term': False
+    }
+]
+
 facebook = Facebook(
     app_id=app_id,
     app_secret=app_secret
@@ -29,8 +62,9 @@ facebook = Facebook(
 facebook.set_default_access_token(access_token=page_token)
 
 class UnionEvent:
-    def __init__(self, name, subtitle, id, description, date, start, end, going, interested, status, start_timestamp, event_type, open_to_all, speakers):
+    def __init__(self, name, term, subtitle, id, description, date, start, end, going, interested, status, start_timestamp, event_type, open_to_all, speakers):
         self.name = name
+        self.term = term
         self.subtitle = subtitle
         self.id = id
         self.description = description
@@ -58,7 +92,7 @@ class UnionEvent:
         return sep.join([a, b, c, d, e])
 
 
-def fbGet(url):
+def fb_get(url):
     try:
         response = facebook.get(endpoint=url)
     except FacebookResponseException as e:
@@ -118,8 +152,20 @@ def parse_speakers(text):
 
     return event_speakers
             
+def get_term(timestamp, get_is_term=False):
+    i = 0
+    event_term = terms[i]['name']
+    is_term = terms[i]['term']
+    while i < len(terms) and timestamp > datetime.timestamp(terms[i]['start']):
+        event_term = terms[i]['name']
+        is_term = terms[i]['term']
+        i += 1
+    if get_is_term:
+        return event_term
+    else:
+        return [event_term, is_term]
 
-def processEvents(event_list_get):
+def process_events(event_list_get):
     events = list()
     for event in event_list_get:
         event_name = event['name']
@@ -150,7 +196,9 @@ def processEvents(event_list_get):
         event_start_time = event_start_time.split('+')[0][:5]
         event_end_time = event['end_time'].split('T')[1].split('+')[0][:5]
 
-        attendance_data = fbGet('/' + str(event_id) + count_param)
+        event_term = get_term(event_start_timestamp)
+
+        attendance_data = fb_get('/' + str(event_id) + count_param)
 
         event_going = str(attendance_data['attending_count'])
         event_interested = str(attendance_data['maybe_count'])
@@ -187,15 +235,15 @@ def processEvents(event_list_get):
         else:
             event_subtitle = None
         
-        event = UnionEvent(event_name, event_subtitle, event_id, event_description, event_date, event_start_time, event_end_time, event_going, event_interested, event_status, event_start_timestamp, event_type, event_open_to_all, event_speakers)
+        event = UnionEvent(event_name, event_term, event_subtitle, event_id, event_description, event_date, event_start_time, event_end_time, event_going, event_interested, event_status, event_start_timestamp, event_type, event_open_to_all, event_speakers)
         
         events.append(event)
 
     return sorted(events)
 
-def getEventList():
-    events_get = fbGet(page_id)
-    events = processEvents(events_get)
+def get_event_list():
+    events_get = fb_get(page_id)
+    events = process_events(events_get)
     return events
 
 #print(getEventList()[0].__dict__)

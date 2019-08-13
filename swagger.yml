@@ -32,6 +32,9 @@ paths:
                 event_name:
                   type: string
                   description: Name of the event
+                event_term:
+                  type: string
+                  description: The term that the event is in
                 event_subtitle:
                   type: string
                   description: Subtitle of the event
@@ -82,6 +85,9 @@ paths:
               event_name:
                 type: string
                 description: Name of the event
+              event_term:
+                  type: string
+                  description: The term that the event is in
               event_subtitle:
                   type: string
                   description: Subtitle of the event
@@ -138,6 +144,9 @@ paths:
                 event_name:
                   type: string
                   description: Name of the event
+                event_term:
+                  type: string
+                  description: The term that the event is in
                 event_subtitle:
                   type: string
                   description: Subtitle of the event
@@ -183,6 +192,9 @@ paths:
                 event_name:
                   type: string
                   description: Name of the event
+                event_term:
+                  type: string
+                  description: The term that the event is in
                 event_subtitle:
                   type: string
                   description: Subtitle of the event

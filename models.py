@@ -6,6 +6,7 @@ class Event(db.Model):
     __tablename__ = 'events'
     event_id = db.Column(db.Integer, primary_key=True)
     event_name = db.Column(db.String)
+    event_term = db.Column(db.String)
     event_subtitle = db.Column(db.String)
     event_description = db.Column(db.Unicode)
     event_date = db.Column(db.String)
@@ -85,6 +86,7 @@ class SpeakerEventSchema(ma.ModelSchema):
 
     event_id = fields.Int()
     event_name = fields.Str()
+    event_term = fields.Str()
     event_subtitle = fields.Str()
     event_description = fields.Str()
     event_date = fields.Str()
