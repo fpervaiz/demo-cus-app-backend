@@ -12,7 +12,7 @@ basePath: /api
 
 # Paths supported by the server application
 paths:
-  /term:
+  /events/term:
     get:
       operationId: events.this_term
       tags:
