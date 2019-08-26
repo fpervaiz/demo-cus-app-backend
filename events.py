@@ -85,7 +85,10 @@ def by_status_type(event_status_param, event_type_param):
             Event.query.filter(and_(Event.event_status == event_status_param, Event.event_type == event_type_param)).order_by(Event.event_start_timestamp).all()
         )
 
-    #is_many = len(result_events) > 1  
+    #is_many = len(result_events) > 1
+
+    if event_status_param == 'finished':
+        result_events = reversed(result_events) 
 
     event_schema = EventSchema(many=True)
     data = event_schema.dump(result_events).data
