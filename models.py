@@ -101,3 +101,16 @@ class SpeakerEventSchema(ma.ModelSchema):
     event_photo_url = fields.Str()
     event_action_text = fields.Str()
     event_action_url = fields.Str()
+
+class Discount(db.Model):
+    __tablename__ = 'discounts'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String)
+    subtitle = db.Column(db.String)
+    image = db.Column(db.String)
+    description = db.Column(db.String)
+
+class DiscountSchema(ma.ModelSchema):
+    class Meta:
+        model = Discount
+        sqla_session = db.session
