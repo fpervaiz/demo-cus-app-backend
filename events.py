@@ -87,11 +87,11 @@ def by_status_type(event_status_param, event_type_param):
     
     if event_type_param == 'all':
         result_events = (
-        db.session.query(Event.event_name, Event.event_date, Event.event_start, Event.event_end, Event.event_term, Event.event_type, Event.event_id).filter(and_(Event.event_status == event_status_param, Event.event_term == event_term)).order_by(Event.event_start_timestamp).all()
+        db.session.query(Event.event_name, Event.event_subtitle, Event.event_date, Event.event_start, Event.event_end, Event.event_term, Event.event_type, Event.event_id).filter(and_(Event.event_status == event_status_param, Event.event_term == event_term)).order_by(Event.event_start_timestamp).all()
     )
     else:
         result_events = (
-            db.session.query(Event.event_name, Event.event_date, Event.event_start, Event.event_end, Event.event_term, Event.event_type, Event.event_id).filter(and_(Event.event_status == event_status_param, Event.event_type == event_type_param, Event.event_term == event_term)).order_by(Event.event_start_timestamp).all()
+            db.session.query(Event.event_name, Event.event_subtitle, Event.event_date, Event.event_start, Event.event_end, Event.event_term, Event.event_type, Event.event_id).filter(and_(Event.event_status == event_status_param, Event.event_type == event_type_param, Event.event_term == event_term)).order_by(Event.event_start_timestamp).all()
         )
 
     if event_status_param == 'finished':
