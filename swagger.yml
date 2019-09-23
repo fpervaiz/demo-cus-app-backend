@@ -282,3 +282,33 @@ paths:
               speaker_thumb_url:
                 type: string
                 description: Speaker thumbnail url/data
+
+  /info/discounts:
+    get:
+      operationId: info.discounts_read_all
+      tags:
+        - Discounts
+      summary: Read the entire set of discounts, sorted by id (priority)
+      description: Read the entire set of discounts, sorted by id (priority)
+      responses:
+        200:
+          description: Successfully read all discounts
+          schema:
+            type: array
+            items:
+              properties:
+                id:
+                  type: integer
+                  description: Id (priority) of the discount
+                title:
+                  type: string
+                  description: Name of the event
+                subtitle:
+                  type: string
+                  description: The term that the event is in
+                image:
+                  type: string
+                  description: Image for the discount (base64 encoded)
+                description:
+                  type: string
+                  description: Description for the discount
