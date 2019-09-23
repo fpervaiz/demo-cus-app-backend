@@ -18,8 +18,8 @@ def this_term():
     :return:        json string of list of events
     """
     now = datetime.timestamp(datetime.now())
-    out = get_term(now, get_is_term=True)
-    return {'term': out[0], 'is_term': out[1]}
+    out = get_term(now, detailed=True)
+    return out
 
 def read_all():
     """
@@ -59,13 +59,13 @@ def read_one(event_id):
         data = event_schema.dump(event).data
         return data
 
-    # Otherwise, nope, didn't find that person
+    # Otherwise, nope, didn't find that event
     else:
         abort(404, f"Event not found for Id: {event_id}")
 
 def by_status_type(event_status_param, event_type_param):
     """
-    This function returns a list of upcoming or past events of the given type from the database
+    This function returns a list of upcoming or past events by term of the given type from the database
 
     :return:        200 json string
     """
@@ -76,16 +76,26 @@ def by_status_type(event_status_param, event_type_param):
     if event_status_param not in valid_status or event_type_param not in valid_type:
         abort(400, 'Invalid request')
 
+    term_details = get_term(datetime.timestamp(datetime.now()), detailed=True)
+    if term_details['is_term']:
+        event_term = term_details['curr']
+    else:
+        if event_status_param == 'upcoming':
+            event_term = term_details['next']
+        else:
+            event_term = term_details['prev']
+    
     if event_type_param == 'all':
         result_events = (
-        Event.query.filter(Event.event_status == event_status_param).order_by(Event.event_start_timestamp).all()
+        db.session.query(Event.event_name, Event.event_date, Event.event_start, Event.event_end, Event.event_term, Event.event_type, Event.event_id).filter(and_(Event.event_status == event_status_param, Event.event_term == event_term)).order_by(Event.event_start_timestamp).all()
     )
     else:
         result_events = (
-            Event.query.filter(and_(Event.event_status == event_status_param, Event.event_type == event_type_param)).order_by(Event.event_start_timestamp).all()
+            db.session.query(Event.event_name, Event.event_date, Event.event_start, Event.event_end, Event.event_term, Event.event_type, Event.event_id).filter(and_(Event.event_status == event_status_param, Event.event_type == event_type_param, Event.event_term == event_term)).order_by(Event.event_start_timestamp).all()
         )
 
-    #is_many = len(result_events) > 1  
+    if event_status_param == 'finished':
+        result_events = reversed(result_events) 
 
     event_schema = EventSchema(many=True)
     data = event_schema.dump(result_events).data

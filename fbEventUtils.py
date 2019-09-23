@@ -152,16 +152,21 @@ def parse_speakers(text):
 
     return event_speakers
             
-def get_term(timestamp, get_is_term=False):
+def get_term(timestamp, detailed=False):
     i = 0
     event_term = terms[i]['name']
     is_term = terms[i]['term']
     while i < len(terms) and timestamp > datetime.timestamp(terms[i]['start']):
         event_term = terms[i]['name']
         is_term = terms[i]['term']
+        prev_term = terms[i-1]['name']
+        try:
+            next_term = terms[i+1]['name']
+        except IndexError:
+            next_term = 'Future'
         i += 1
-    if get_is_term:
-        return [event_term, is_term]
+    if detailed:
+        return {'curr': event_term, 'is_term': is_term, 'prev': prev_term, 'next': next_term}
     else:
         return event_term
 
