@@ -11,7 +11,7 @@ count_param = '?fields=attending_count,maybe_count'
 
 app_id = '636985933445299'
 app_secret = '48fff212b34f1368740b1a8684030cc8'
-page_token = 'EAAJDVdhKOLMBAL7QlQwAOlQGo3KwBe5ZCd9JrD5966wY7KxXXjJfAZBGVbWmht4RCNYILtXKSrr48ZCcKWSmrM4pwL2lqkDVO1ybaCtOgNKoPtXARPKtHSE2gDKwAi6j0X3I7VlZAbqtgjTvFHwFKDnYFVpfROvZCWLk2qhBxkAZDZD'
+page_token = 'EAAJDVdhKOLMBAHYSP2W2Qa3aIizoc1ZAgo8qyhkpBYJEOU4V0R8ZAuXBClDRdBGvG5v43i090P6kI1aXpXwZC6CPjNzDYOfWj1BJC57B663QoqZAFmw0scGCE1wGHjFzmWV4baYmugMfW0mXNJhgyGB2bl4l5XcLP2P5aZB7jgAZDZD'
 
 # Need to come up with a specification for consistently
 # identifying event type from Facebook event title
