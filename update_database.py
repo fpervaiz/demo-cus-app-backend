@@ -6,13 +6,13 @@ from models import Event, Speaker
 from fbEventUtils import get_event_list
 
 # Data to update database with
-# eventData = get_event_list()
+eventData = get_event_list()
 
 # pickle dump for debugging
-# pickle.dump(eventData, open("eventData.p", "wb"))
+pickle.dump(eventData, open("eventData.p", "wb"))
 
 # pickle load for debugging
-eventData = pickle.load(open("eventData.p", "wb"))
+#eventData = pickle.load(open("eventData.p", "rb"))
 
 # iterate over the event structure and populate the database
 for event in eventData:
@@ -21,9 +21,10 @@ for event in eventData:
     try:
         record = q.one()
         recordExists = True
-    except
+    except:
+        recordExists = False
     
-    if record:
+    if recordExists:
         # already exists so update
         record.event_name = event.name
         record.event_description = event.description

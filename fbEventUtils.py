@@ -30,7 +30,7 @@ terms = [
     {
         'name': 'Long Vacation 2019',
         'start': datetime.strptime('2019-07-01', '%Y-%m-%d'),
-        'term': False       
+        'term': False
     },
     {
         'name': 'Michaelmas 2019',
@@ -60,6 +60,7 @@ facebook = Facebook(
 )
 
 facebook.set_default_access_token(access_token=page_token)
+
 
 class UnionEvent:
     def __init__(self, name, term, subtitle, id, description, date, start, end, going, interested, status, start_timestamp, event_type, open_to_all, speakers):
@@ -103,18 +104,21 @@ def fb_get(url):
         except KeyError:
             return response.json_body
 
+
 def parse_speakers(text):
     # TODO SPECIFICATION NEEDED
-    # Remove blank lines and strip end of line colons/spaces   
+    ''' Remove blank lines and strip end of line colons/spaces
     text = text.split('\n')
     lines = [line.strip() for line in text if not line == '']
     for i in range(len(lines)):
         if lines[i].endswith(':'):
             lines[i] = lines[i].replace(':', '')
-            
+    
+    lines_lower = [line.lower() for line in lines]
+
     # Find start and end of speaker descriptions
-    prop_i = lines.index('Proposition')
-    opp_i = lines.index('Opposition')
+    prop_i = lines_lower.index('proposition')
+    opp_i = lines_lower.index('opposition')
     # end_i = lines.index('***') # to be implemented
 
     # Create list of speaker dictionaries
@@ -139,19 +143,36 @@ def parse_speakers(text):
             speaker['desc'] = 'Error speaker {} description'.format(i+1)
             speaker['type'] = 'prop'
         event_speakers.append(speaker)
-        
+
     # TODO
     # for i in range(len(opp_names)):
     for i in range(3):
         speaker = dict()
-        speaker['name'] = 'Opp Speaker {}'.format(i+1) # opp_names[i]
-        speaker['desc'] = 'Opp Speaker {}'.format(i+1) # opp_desc[i]
+        speaker['name'] = 'Opp Speaker {}'.format(i+1)  # opp_names[i]
+        speaker['desc'] = 'Opp Speaker {}'.format(i+1)  # opp_desc[i]
         speaker['type'] = 'opp'
         event_speakers.append(speaker)
+    '''
+
+    event_speakers = list()
+
+    for i in range(3):
+        speaker = dict()
+        speaker['name'] = 'Prop Speaker {}'.format(i+1)  # opp_names[i]
+        speaker['desc'] = 'Prop Speaker {}'.format(i+1)  # opp_desc[i]
+        speaker['type'] = 'prop'
+        event_speakers.append(speaker)
     
+    for i in range(3):
+        speaker = dict()
+        speaker['name'] = 'Opp Speaker {}'.format(i+1)  # opp_names[i]
+        speaker['desc'] = 'Opp Speaker {}'.format(i+1)  # opp_desc[i]
+        speaker['type'] = 'opp'
+        event_speakers.append(speaker)
 
     return event_speakers
-            
+
+
 def get_term(timestamp, detailed=False):
     i = 0
     event_term = terms[i]['name']
@@ -170,6 +191,7 @@ def get_term(timestamp, detailed=False):
     else:
         return event_term
 
+
 def process_events(event_list_get):
     events = list()
     for event in event_list_get:
@@ -180,7 +202,7 @@ def process_events(event_list_get):
         date_string, event_start_time = event['start_time'].split('T')
         dt_object = datetime.strptime(date_string, '%Y-%m-%d')
         event_date = dt_object.strftime('%A %d %B')
-        
+
         start_time_string = event['start_time']
         dt_object = datetime.strptime(start_time_string, '%Y-%m-%dT%H:%M:%S%z')
         event_start_timestamp = datetime.timestamp(dt_object)
@@ -205,8 +227,15 @@ def process_events(event_list_get):
 
         attendance_data = fb_get('/' + str(event_id) + count_param)
 
-        event_going = str(attendance_data['attending_count'])
-        event_interested = str(attendance_data['maybe_count'])
+        try:
+            event_going = str(attendance_data['attending_count'])
+        except KeyError:
+            event_going = '0'
+
+        try:
+            event_interested = str(attendance_data['maybe_count'])
+        except KeyError:
+            event_interested = '0'
 
         if any(identifier in event_name.lower() for identifier in debate_identifiers):
             event_type = 'debate'
@@ -227,8 +256,7 @@ def process_events(event_list_get):
             try:
                 event_speakers = parse_speakers(event_description)
             except ValueError:
-                print('Error processing {}'.format(event_name))
-                print(event_description)
+                print('Error automatically processing speakers for {}'.format(event_name))
                 event_speakers = None
         else:
             event_speakers = None
@@ -239,17 +267,18 @@ def process_events(event_list_get):
             event_subtitle = b.strip()
         else:
             event_subtitle = None
-        
-        event = UnionEvent(event_name, event_term, event_subtitle, event_id, event_description, event_date, event_start_time, event_end_time, event_going, event_interested, event_status, event_start_timestamp, event_type, event_open_to_all, event_speakers)
-        
+
+        event = UnionEvent(event_name, event_term, event_subtitle, event_id, event_description, event_date, event_start_time, event_end_time,
+                           event_going, event_interested, event_status, event_start_timestamp, event_type, event_open_to_all, event_speakers)
+
         events.append(event)
 
     return sorted(events)
 
+
 def get_event_list():
-    events_get = fb_get(page_id)
+    events_get = fb_get(page_id + time_param + 'upcoming&limit=64')
     events = process_events(events_get)
     return events
 
-#print(getEventList()[0].__dict__)
-
+# print(getEventList()[0].__dict__)
