@@ -312,3 +312,63 @@ paths:
                 description:
                   type: string
                   description: Description for the discount
+
+  /info/news/all:
+    get:
+      operationId: info.news_read_all
+      tags:
+        - News
+      summary: Read the entire set of news, sorted by id (priority)
+      description: Read the entire set of news, sorted by id (priority)
+      responses:
+        200:
+          description: Successfully read all news
+          schema:
+            type: array
+            items:
+              properties:
+                news_id:
+                  type: integer
+                  description: Id (priority) of the news
+                news_title:
+                  type: string
+                  description: Name of the news
+                news_content:
+                  type: string
+                  description: Content of news
+                news_date:
+                  type: string
+                  description: Date of news
+                news_thumb_img:
+                  type: string
+                  description: base64 encoded thumbnail for news
+
+  /info/news/few:
+    get:
+      operationId: info.news_read_few
+      tags:
+        - News
+      summary: Read the latest 3 news, sorted by id (priority)
+      description: Read the latest 3 news, sorted by id (priority)
+      responses:
+        200:
+          description: Successfully read all news
+          schema:
+            type: array
+            items:
+              properties:
+                news_id:
+                  type: integer
+                  description: Id (priority) of the news
+                news_title:
+                  type: string
+                  description: Name of the news
+                news_content:
+                  type: string
+                  description: Content of news
+                news_date:
+                  type: string
+                  description: Date of news
+                news_thumb_img:
+                  type: string
+                  description: base64 encoded thumbnail for news

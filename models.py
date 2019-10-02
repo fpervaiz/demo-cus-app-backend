@@ -114,3 +114,16 @@ class DiscountSchema(ma.ModelSchema):
     class Meta:
         model = Discount
         sqla_session = db.session
+
+class News(db.Model):
+    __tablename__ = 'news'
+    news_id = db.Column(db.Integer, primary_key=True)
+    news_date = db.Column(db.String)
+    news_title = db.Column(db.String)
+    news_content = db.Column(db.String)
+    news_thumb_img = db.Column(db.String)
+
+class NewsSchema(ma.ModelSchema):
+    class Meta:
+        model = News
+        sqla_session = db.session
