@@ -17,7 +17,7 @@ CORS(connex_app.app)
 # Read the swagger.yml file to configure the endpoints
 connex_app.add_api("swagger.yml")
 
-
+'''
 # Create a URL route in our application for "/"
 @connex_app.route("/")
 def home():
@@ -57,6 +57,6 @@ def notes(person_id, note_id=""):
     """
     return render_template("notes.html", person_id=person_id, note_id=note_id)
 
-
+'''
 if __name__ == "__main__":
     connex_app.run(debug=True)

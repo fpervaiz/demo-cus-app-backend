@@ -27,7 +27,8 @@ for event in eventData:
     if recordExists:
         # already exists so update
         record.event_name = event.name
-        record.event_description = event.description
+        if record.event_type != 'debate':
+            record.event_description = event.description
         record.event_term = event.term
         record.event_subtitle = event.subtitle
         record.event_date = event.date
