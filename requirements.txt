@@ -1,10 +1,12 @@
 astroid==2.2.5
 certifi==2018.11.29
+cffi==1.13.1
 chardet==3.0.4
 Click==7.0
 clickclick==1.2.2
 colorama==0.4.1
 connexion==2.2.0
+cryptography==2.8
 facebook-py-sdk==1.1.0
 Flask==1.0.2
 Flask-Cors==3.0.8
@@ -23,7 +25,9 @@ marshmallow-sqlalchemy==0.15.0
 mccabe==0.6.1
 openapi-spec-validator==0.2.4
 pathlib==1.0.1
+pycparser==2.19
 pylint==2.3.1
+pyOpenSSL==19.0.0
 PyYAML==4.2b4
 requests==2.21.0
 six==1.12.0

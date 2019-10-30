@@ -9,6 +9,13 @@ from flask_cors import CORS
 # Local modules
 import config
 
+def basic_auth(username, password, required_scopes=None):
+    if username == 'admin' and password == 'secret':
+        return {'sub': 'admin'}
+
+    # optional: raise exception for custom error response
+    return None
+
 # Get the application instance
 connex_app = config.connex_app
 connex_app.app.url_map.strict_slashes = False
@@ -16,6 +23,8 @@ CORS(connex_app.app)
 
 # Read the swagger.yml file to configure the endpoints
 connex_app.add_api("swagger.yml")
+
+
 
 '''
 # Create a URL route in our application for "/"

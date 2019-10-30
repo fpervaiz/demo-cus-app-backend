@@ -7,8 +7,9 @@ consumes:
   - application/json
 produces:
   - application/json
-
 basePath: /api
+security:
+  - basic: []
 
 # Paths supported by the server application
 paths:
@@ -372,3 +373,8 @@ paths:
                 news_thumb_img:
                   type: string
                   description: base64 encoded thumbnail for news
+
+securityDefinitions:
+  basic:
+    type: basic
+    x-basicInfoFunc: app.basic_auth
