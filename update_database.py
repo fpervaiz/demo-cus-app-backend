@@ -6,13 +6,13 @@ from models import Event, Speaker
 from fbEventUtils import get_event_list
 
 # Data to update database with
-eventData = get_event_list()
+#eventData = get_event_list()
 
 # pickle dump for debugging
-pickle.dump(eventData, open("eventData.p", "wb"))
+#pickle.dump(eventData, open("eventData.p", "wb"))
 
 # pickle load for debugging
-#eventData = pickle.load(open("eventData.p", "rb"))
+eventData = pickle.load(open("eventData.p", "rb"))
 
 # iterate over the event structure and populate the database
 for event in eventData:
@@ -53,5 +53,26 @@ for event in eventData:
                 )
     
         db.session.add(eventRow)
+
+    q = db.session.query(Event)
+    #q = q.filter(Event.event_id=='upcoming')
+    
+    now = datetime.now().timestamp()
+    for record in q:
+
+        # Ugly hack
+        if record.event_type == 'debate':
+            event_end_timestamp = record.event_start_timestamp + 5400
+        else:
+            event_end_timestamp = record.event_start_timestamp + 3600
+
+        if event_end_timestamp <= now:
+            record.event_status = 'finished'
+        elif record.event_start_timestamp <= now and event_end_timestamp >= now:
+            record.event_status = 'live'
+        elif record.event_start_timestamp >= now:
+            record.event_status = 'upcoming'
+        else:
+            record.event_status = 'undefined'
 
 db.session.commit()
