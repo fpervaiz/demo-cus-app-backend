@@ -11,8 +11,8 @@ sqlite_url = "sqlite:///" + os.path.join(basedir, "data.db")
 
 
 def basic_auth(username, password, required_scopes=None):
-    if username == 'admin' and password == 'secret':
-        return {'sub': 'admin'}
+    if username == 'appuser' and password == 'cusapp1815':
+        return {'sub': 'app'}
 
     # optional: raise exception for custom error response
     return None
