@@ -6,13 +6,13 @@ from models import Event, Speaker
 from fbEventUtils import get_event_list
 
 # Data to update database with
-#eventData = get_event_list()
+eventData = get_event_list()
 
 # pickle dump for debugging
-#pickle.dump(eventData, open("eventData.p", "wb"))
+pickle.dump(eventData, open("eventData.p", "wb"))
 
 # pickle load for debugging
-eventData = pickle.load(open("eventData.p", "rb"))
+#eventData = pickle.load(open("eventData.p", "rb"))
 
 # iterate over the event structure and populate the database
 for event in eventData:
@@ -30,7 +30,7 @@ for event in eventData:
         if record.event_type != 'debate':
             record.event_description = event.description
         record.event_term = event.term
-        record.event_subtitle = event.subtitle
+        #record.event_subtitle = event.subtitle
         record.event_date = event.date
         record.event_start = event.start
         record.event_end = event.end
