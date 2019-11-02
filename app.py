@@ -30,8 +30,8 @@ app_instance.config["SQLALCHEMY_DATABASE_URI"] = sqlite_url
 app_instance.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # Debug
-app_instance.url_map.strict_slashes = False
-CORS(app_instance)
+#app_instance.url_map.strict_slashes = False
+#CORS(app_instance)
 
 # Create the SqlAlchemy db instance
 db = SQLAlchemy(app_instance)
