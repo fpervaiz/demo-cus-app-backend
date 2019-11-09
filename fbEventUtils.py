@@ -1,5 +1,6 @@
 import requests
 import json
+import os
 
 from facebook_sdk.exceptions import FacebookResponseException
 from facebook_sdk.facebook import Facebook
@@ -9,9 +10,9 @@ page_id = '/TheCambridgeUnion/events'
 time_param = '?time_filter='
 count_param = '?fields=attending_count,maybe_count'
 
-app_id = '636985933445299'
-app_secret = '48fff212b34f1368740b1a8684030cc8'
-page_token = 'EAAJDVdhKOLMBAHYSP2W2Qa3aIizoc1ZAgo8qyhkpBYJEOU4V0R8ZAuXBClDRdBGvG5v43i090P6kI1aXpXwZC6CPjNzDYOfWj1BJC57B663QoqZAFmw0scGCE1wGHjFzmWV4baYmugMfW0mXNJhgyGB2bl4l5XcLP2P5aZB7jgAZDZD'
+app_id = os.getenv("FB_APP_ID")
+app_secret = os.getenv("FB_APP_SECRET")
+page_token = os.getenv("FB_PAGE_TOKEN")
 
 # Need to come up with a specification for consistently
 # identifying event type from Facebook event title
