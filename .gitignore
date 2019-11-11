@@ -115,7 +115,11 @@ dmypy.json
 .pyre/
 
 # ignore the database
-people.db
+data.db
+eventData.p
 
 # VS Code
 .vscode/
+
+# AWS env folder
+unionApp-backend/
