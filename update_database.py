@@ -100,6 +100,7 @@ def update_db():
 
             if event_end_timestamp <= now:
                 record.event_status = 'finished'
+                record.event_action_text = None
             elif record.event_start_timestamp <= now and event_end_timestamp >= now:
                 record.event_status = 'live'
             elif record.event_start_timestamp >= now:
