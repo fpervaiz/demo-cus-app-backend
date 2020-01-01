@@ -7,6 +7,7 @@ from flask import make_response, abort
 from config import db
 from models import Event, EventSchema, Speaker, SpeakerSchema
 from sqlalchemy import and_, or_
+from json import dumps as jdumps
 
 from fbEventUtils import get_term
 from datetime import datetime
@@ -109,11 +110,14 @@ def next():
     """
 
     next_event = (
-        Event.query.filter(or_(Event.event_status == 'upcoming', Event.event_status == 'live')).order_by(Event.event_start_timestamp).first()
+        db.session.query(Event.event_name, Event.event_subtitle, Event.event_date, Event.event_start, Event.event_end, Event.event_term, Event.event_type, Event.event_photo_url, Event.event_id, Event.event_status).filter(or_(Event.event_status == 'upcoming', Event.event_status == 'live')).order_by(Event.event_start_timestamp).first()
     )
 
+    #if next_event is not None:
     event_schema = EventSchema()
     data = event_schema.dump(next_event).data
+    #else:
+    #    data = jdumps("")
     return data
 
 def get_speakers(event_id, speaker_type):
