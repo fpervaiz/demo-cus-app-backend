@@ -100,35 +100,36 @@ def update_db():
             db.session.add(eventRow)
         
         db.session.commit()
-        q = db.session.query(Event)
-        #q = q.filter(Event.event_id=='upcoming')
+        
+    q = db.session.query(Event)
+    #q = q.filter(Event.event_id=='upcoming')
 
-        now = datetime.now().timestamp()
-        for record in q:
+    now = datetime.now().timestamp()
+    for record in q:
 
-            # Ugly hack
-            if record.event_type == 'debate':
-                event_end_timestamp = record.event_start_timestamp + 5400
-            else:
-                event_end_timestamp = record.event_start_timestamp + 3600
+        # Ugly hack
+        if record.event_type == 'debate':
+            event_end_timestamp = record.event_start_timestamp + 5400
+        else:
+            event_end_timestamp = record.event_start_timestamp + 3600
 
-            if event_end_timestamp <= now:
-                record.event_status = 'finished'
-                record.event_action_text = None
-                #logging.info("Event {}: {} finished".format(event.id, event.name))
-            elif record.event_start_timestamp <= now and event_end_timestamp >= now:
-                record.event_status = 'live'
-                #logging.info("Event {}: {} live".format(event.id, event.name))
-            elif record.event_start_timestamp >= now:
-                record.event_status = 'upcoming'
-                #logging.info("Event {}: {} upcoming".format(event.id, event.name))
-            else:
-                record.event_status = 'undefined'
-                #logging.info("Event {}: {} undefined".format(event.id, event.name))
+        if event_end_timestamp <= now:
+            record.event_status = 'finished'
+            record.event_action_text = None
+            #logging.info("Event {}: {} finished".format(event.id, event.name))
+        elif record.event_start_timestamp <= now and event_end_timestamp >= now:
+            record.event_status = 'live'
+            #logging.info("Event {}: {} live".format(event.id, event.name))
+        elif record.event_start_timestamp >= now:
+            record.event_status = 'upcoming'
+            #logging.info("Event {}: {} upcoming".format(event.id, event.name))
+        else:
+            record.event_status = 'undefined'
+            #logging.info("Event {}: {} undefined".format(event.id, event.name))
 
-            start_delta = record.event_start_timestamp - now
-            if start_delta > 1680 and start_delta < 1920:
-                send_push_30m(record.event_id, record.event_name)
+        start_delta = record.event_start_timestamp - now
+        if start_delta > 1680 and start_delta < 1920:
+            send_push_30m(record.event_id, record.event_name)
 
     db.session.commit()
 
