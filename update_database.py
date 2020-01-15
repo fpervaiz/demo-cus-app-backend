@@ -44,14 +44,14 @@ def send_push_30m(event_id, event_name):
 
 def update_db():
     # Data to update database with
-    #eventData = get_event_list()
+    eventData = get_event_list()
     logging.info("Retreived data from Facebook")
 
     # pickle dump for debugging
-    #pickle.dump(eventData, open("eventData.p", "wb"))
+    pickle.dump(eventData, open("eventData.p", "wb"))
 
     # pickle load for debugging
-    eventData = pickle.load(open("eventData.p", "rb"))
+    #eventData = pickle.load(open("eventData.p", "rb"))
 
     # iterate over the event structure and populate the database
     for event in eventData:

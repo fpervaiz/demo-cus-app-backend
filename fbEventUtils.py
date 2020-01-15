@@ -210,7 +210,11 @@ def process_events(event_list_get):
         start_time_string = event['start_time']
         dt_object = datetime.strptime(start_time_string, '%Y-%m-%dT%H:%M:%S%z')
         event_start_timestamp = datetime.timestamp(dt_object)
-        end_time_string = event['start_time']
+        try:
+            end_time_string = event['end_time']
+        except KeyError:
+            # Draft event seems to exclude end time in API response even if set
+            continue
         dt_object = datetime.strptime(end_time_string, '%Y-%m-%dT%H:%M:%S%z')
         event_end_timestamp = datetime.timestamp(dt_object)
 
