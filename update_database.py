@@ -14,7 +14,7 @@ from fbEventUtils import get_event_list
 from config import db
 from models import Event, Speaker
 
-logging.basicConfig(filename='update.log', level=logging.DEBUG)
+logging.basicConfig(filename='update.log', level=logging.DEBUG, format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
 fcm = FCMNotification(
     api_key=os.getenv("FCM_API_KEY")
@@ -32,14 +32,19 @@ scheduler.start()
 
 def send_push_30m(event_id, event_name):
     message = "Event starting in 30 minutes"
-    res1 = fcm.notify_topic_subscribers(topic_name=event_id, message_title=event_name, message_body=message)
-    res2 = fcm.notify_topic_subscribers(topic_name="all", message_title=event_name, message_body=message)
+    topic_condition = "'all' in topics || '{}' in topics".format(event_id)
+    message_data = {
+        'notification_foreground': 'true',
+        'event_id': event_id
+    }
+
+    res = fcm.notify_topic_subscribers(condition=topic_condition, message_title=event_name, message_body=message, data_message=message_data)
     # Lazy check
-    if res1['success'] and res2['success']:
-        logging.info("Sent 30 minute push for {}: {}".format(event.id, event.name))
+    if res['success']:
+        logging.info("Sent 30 minute push for {}: {}".format(event_id, event_name))
         return True
     else:
-        logging.info("Failed to send 30 minute push for {}: {}: error {}, {}".format(event.id, event.name, res1, res2))
+        logging.info("Failed to send 30 minute push for {}: {}: error {}".format(event_id, event_name, res))
         return False
 
 def update_db():
@@ -130,6 +135,10 @@ def update_db():
         start_delta = record.event_start_timestamp - now
         if start_delta > 1680 and start_delta < 1920:
             send_push_30m(record.event_id, record.event_name)
+
+        if not record.event_action_text and record.event_type != 'other':
+            logging.info("Creating mailto {}: {}".format(event.id, event.name))
+
 
     db.session.commit()
 
